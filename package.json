@@ -1,0 +1,24 @@
+{
+  "name": "automation-testing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "ENGINE=pw mocha 'specs/**/*.spec.ts' --require ts-node/register --file ./lauch/index.ts --timeout 500000",
+    "driver:update": "selenium-standalone install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "promod": "^1.7.8",
+    "sat-utils": "^1.10.0",
+    "selenium-standalone": "^9.0.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  }
+}
