@@ -1,28 +1,30 @@
-import {BaseFragment} from "./fragment";
-import {$$} from '../../lauch/engine'
+import {PromodElementsType} from 'promod/built/interface';
+
+import { $$ } from '../../lauch/engine';
 
 class Collection {
-	selector: string;
-	fragment;
+  roots: PromodElementsType;
+  fragment;
+  id: string;
 
-	constructor(selector: string, fragment) {
-		this.selector = selector;
-		this.fragment = fragment;
-	}
+  constructor(selector: string | PromodElementsType, name: string, fragment) {
+    this.roots = typeof selector === 'string'? $$(selector): selector;
+    this.fragment = fragment;
+    this.id = name;
+  }
 
-	async getData() {
-		const FragmentClass = this.fragment;
-		const fragmentRootElements = $$(this.selector);
+  async getData(data: {[k: string]: null} = {}) {
+    const FragmentClass = this.fragment;
 
-		const result = await fragmentRootElements.map(async (el) => {
-			const collectionFragmentInstance = new FragmentClass(el)
+    const result = await this.roots.map(async (el, index) => {
+      const collectionFragmentInstance = new FragmentClass(el, `${this.id} ${index}`);
+      const collectionFragmentData = await collectionFragmentInstance.getData(data);
 
-			const collectionFragmentData = await collectionFragmentInstance.getData();
+      return collectionFragmentData; // це цілий ров у вигляді об*єкта з властивостями як у рові
+    });
 
-			return collectionFragmentData;
-		});
-		return result
-	}
+    return result; //це масив, який складається із тих ж ров-об*єктів
+  }
 }
 
-export {Collection}
+export { Collection };
