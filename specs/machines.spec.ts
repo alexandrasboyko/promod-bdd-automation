@@ -1,13 +1,11 @@
-import {provider} from '../framework';
+import { provider } from '../framework';
 import { expect } from 'chai';
-import {sleep, lengthToIndexesArray, asyncMap} from 'sat-utils'
-import { LoginFragment, MashineListRowFragment, MachineFiltersFragment } from '../framework/fragments';
-import {Collection} from '../lib/base/collection';
+import { MachinesTablePage, MainPage } from '../framework/pages';
+import { MachineFiltersFragment } from '../framework/pages/machines-table/fragments/machines.filters';
 
-const {browser} = provider;
+const { browser } = provider;
 const { $, $$ } = provider.elementsInterface;
 const { waitForCondition } = provider.waiters;
-
 
 describe('Login test suite', () => {
   beforeEach('Set up', async () => {
@@ -17,20 +15,19 @@ describe('Login test suite', () => {
     await browser.get('http://localhost:4000');
   });
 
-	it.only('filter machines by manufacturer', async () => {
-		const filterManufacturer = 'ITALMIX DUPLEX'
-    await new LoginFragment().login({ username: 'admin', password: 'admin' });
-    //await waitForCondition(async () => await $('#table_page').isDisplayed());
+  it.only('filter machines by manufacturer', async () => {
+    const machinesPage = new MachinesTablePage();
+    const filterManufacturer = 'ITALMIX DUPLEX';
+    const mainPage = new MainPage();
+    //TODO
+    await mainPage.sendKeys({ login: { username: 'admin', password: 'admin' } });
 
-    // console.log(await new MashineListRowFragment(0).getMachineData());
-    // console.log(await new MashineListRowFragment(1).getMachineData());
+    await mainPage.click({ login: { signIn: null } });
 
-    await new MachineFiltersFragment().filter({manufacturer: filterManufacturer});
-    const machinesCollection = new Collection('#table_page > div.machies_list_section > table > tbody > tr', MashineListRowFragment);
-
-		const result = await machinesCollection.getData()
-
-		result.forEach((machineData)=> expect (machineData.manufacturer).to.include(filterManufacturer))
-
+    await machinesPage.sendKeys({ filters: { manufacturer: filterManufacturer } });
+    await machinesPage.click({ filters: { filter: null } });
+    const result = await machinesPage.getData({ machines: { manufacturer: null } });
+    console.log(result, '<<<');
+    result.machines.forEach((machineData) => expect(machineData.manufacturer).to.include(filterManufacturer));
   });
 });
